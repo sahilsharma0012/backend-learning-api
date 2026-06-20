@@ -18,6 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import(TokenObtainPairView, TokenRefreshView,)
 
+from django.conf import settings
+from django.conf.urls.static import static
+
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('todo.urls')),
@@ -25,5 +33,28 @@ urlpatterns = [
     # JWT endpoints
     path('api/token/', TokenObtainPairView.as_view()),
     path('api/token/refresh/', TokenRefreshView.as_view()),
+    
+    
+     # Schema endpoint
+    path(
+        'api/schema/',
+        SpectacularAPIView.as_view(),
+        name='schema'
+    ),
+
+    # Swagger UI
+    path(
+        'api/docs/',
+        SpectacularSwaggerView.as_view(
+            url_name='schema'
+        ),
+        name='swagger-ui'
+    ),
 ]
+
+## For uploading Media(files) in api 
+urlpatterns += static(
+    settings.MEDIA_URL,
+    document_root=settings.MEDIA_ROOT
+)
 

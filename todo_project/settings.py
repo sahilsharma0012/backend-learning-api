@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     ## my apps and services
     'rest_framework',
     'django_filters',
+    'drf_spectacular',
     'todo',
     
 ]
@@ -138,4 +139,12 @@ REST_FRAMEWORK = {
         'rest_framework.pagination.PageNumberPagination',
         
     'PAGE_SIZE': 5,
+    
+    'DEFAULT_SCHEMA_CLASS':
+        'drf_spectacular.openapi.AutoSchema',
 }
+
+
+# Upload media(files) via api
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
