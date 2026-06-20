@@ -190,12 +190,17 @@ from rest_framework.response import Response
 
 from .models import Todo
 from .serializers import TodoSerializer
+from .permissions import IsAdminOrReadOnly
 
 from django.contrib.auth.models import User    
 
 class TodoViewSet(viewsets.ModelViewSet):
     serializer_class = TodoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
+    
+    filterset_fields = ['completed']
+    search_fields = ['title']
+    ordering_fields = ['title', 'id']
     
     def get_queryset(self):
         return Todo.objects.filter(user = self.request.user)
