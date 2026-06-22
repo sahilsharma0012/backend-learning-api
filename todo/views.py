@@ -209,8 +209,56 @@ class TodoViewSet(viewsets.ModelViewSet):
         serializer.save(user = self.request.user)
     
     
+
+
+
+
+#######################################
+################################################################################
+###########################################################################################################
+######################### Celery ####################################################################################################
+###################################################################################################################################################
+
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from .models import Todo
+from .serializers import TodoSerializer
+from .permissions import IsAdminOrReadOnly
+
+from django.contrib.auth.models import User    
+
+
+from .tasks import process_todo_creation, send_welcome_email, process_pdf
+
+
+class TodoViewSet(viewsets.ModelViewSet):
+    serializer_class = TodoSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
     
+    filterset_fields = ['completed']
+    search_fields = ['title']
+    ordering_fields = ['title', 'id']
     
+    def get_queryset(self):
+        return Todo.objects.filter(user = self.request.user)
+    
+    def perform_create(self, serializer):
+        
+        todo = serializer.save(user = self.request.user)
+        # process_todo_creation.delay(todo.title)
+        #send_welcome_email.delay("test@gmail.com")
+        
+        if todo.document:
+            process_pdf.delay(todo.document.path)
+        
+        
+        
+        
+        
+        
     
 ## Signup API or User Registration API
 @api_view(['POST'])
@@ -224,3 +272,5 @@ def register_user(request):
     user = User.objects.create_user(username = username, password = password)
     
     return Response({"message": "User created Successfully", "username": user.username}, status = 201)
+
+    
