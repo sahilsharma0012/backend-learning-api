@@ -148,3 +148,18 @@ REST_FRAMEWORK = {
 # Upload media(files) via api
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+
+# Celery 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+
+
+# Email Configuration (console)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
